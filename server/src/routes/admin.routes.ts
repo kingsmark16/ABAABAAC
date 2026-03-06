@@ -7,8 +7,8 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/',protectRoute, getAllPosts);
-router.get('/:id', getPost);
-router.post('/', upload.fields([{ name: 'images', maxCount: 10 }, { name: 'videos', maxCount: 10 }]), createPost);
-router.delete('/:id', deletePost);
+router.get('/:id', protectRoute, getPost);
+router.post('/', protectRoute, upload.fields([{ name: 'images', maxCount: 10 }, { name: 'videos', maxCount: 10 }]), createPost);
+router.delete('/:id', protectRoute, deletePost);
 
 export default router;
