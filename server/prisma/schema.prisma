@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id        String   @id @default(ulid())
+  username  String   @unique
+  password  String
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id         String   @id @default(ulid())
+  tokenHash  String   @unique
+  adminId    String
+  admin      Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+}
+
+model Post {
+  id          String    @id @default(ulid())
+  caption     String?
+  pictures    Picture[]
+  videos      Video[]
+  mood        Mood
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Picture {
+  id          String   @id @default(ulid())
+  url         String
+  views       Int      @default(0)
+  postId      String?
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  uploadedAt  DateTime @default(now())
+}
+
+model Video {
+  id           String   @id @default(ulid())
+  length       Int
+  url          String
+  thumbnailUrl String
+  views        Int      @default(0)
+  postId       String?
+  post         Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  uploadedAt   DateTime @default(now())
+}
+
+model DropboxToken {
+  id          String   @id @default(ulid())
+  access_token String
+  refresh_token String?
+  expires_at  DateTime?
+  updatedAt   DateTime @updatedAt
+}
+
+
+enum Mood {
+  HAPPY
+  SAD
+  RAGE
+}
