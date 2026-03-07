@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import dropboxAuth from './routes/dropboxAuth.routes';
 import adminRoutes from './routes/admin.routes';
+import publicRoutes from './routes/public.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/dropbox-auth', dropboxAuth);
 app.use('/api/admin', adminRoutes);
+app.use('/api/public', publicRoutes);
 
 
 app.listen(PORT, () => {
