@@ -1,8 +1,11 @@
+import Featuring from "@/components/Featuring"
 
 
 const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <div className="">
+      <Featuring/>
+    </div>
   )
 }
 
