@@ -1,17 +1,22 @@
-
-//import Particles from "./components/Particles"
+import { Route, Routes } from "react-router"
 import Header from "./components/Header"
+import HomePage from "./pages/HomePage"
+import LoginPage from "./pages/LoginPage"
 import AdminPage from "./pages/AdminPage"
-//import LoginPage from "./pages/LoginPage"
 
 
 const App = () => {
   return (
-    <div>
+    <div className="">
       <Header/>
-      <AdminPage/>
-      
 
+      <main className="pt-16">
+      <Routes>
+        <Route path="/" element={<HomePage/>}/>
+        <Route path="/login" element={<LoginPage/>}/>
+        <Route path="/admin" element={<AdminPage/>}/>
+      </Routes>
+      </main>
     </div>
   )
 }
