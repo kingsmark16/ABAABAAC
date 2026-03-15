@@ -9,10 +9,22 @@ import publicRoutes from './routes/public.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const allowedOrigins = process.env.CLIENT_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean) || ['http://localhost:5173'];
+const allowedOrigins = process.env.CLIENT_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean) || [
+    'http://localhost:5173',
+    'http://192.168.1.141:5173',
+];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        // Allow non-browser tools and same-origin requests with no Origin header.
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
 }));
 app.use(express.json());
