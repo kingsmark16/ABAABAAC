@@ -1,4 +1,4 @@
-import { useFeatureRage } from "@/hooks/rageOfTheDay/use-featureRage"
+import { useFeatureRage } from "@/hooks/featuredPost/use-featureRage"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Flame, Images, RefreshCcw, Sparkles, Video } from "lucide-react";
 import { useMemo, useState } from "react";
