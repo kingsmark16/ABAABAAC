@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Post, PostFormData } from '@/types/admin';
+import type { Post, PostFormData } from '@/types/post';
 
 const API_BASE = 'http://localhost:3000/api/admin';
 

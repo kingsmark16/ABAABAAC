@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import type { Post } from '@/types/admin';
+import type { Post } from '@/types/post';
 import { PostCard } from './PostCard';
 
 interface PostListProps {

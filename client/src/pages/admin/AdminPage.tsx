@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { Post, PostFormData } from '@/types/admin';
+import type { Post, PostFormData } from '@/types/post';
 import { usePosts, useCreatePost, useUpdatePost, useDeletePost } from '@/hooks/use-posts';
 import { INITIAL_FORM_DATA } from './constants';
 import { StatusMessage } from './components/StatusMessage';

@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import type { Post } from "@/types/admin";
+import type { Post } from "@/types/post";
 
 
 export const publicService = {

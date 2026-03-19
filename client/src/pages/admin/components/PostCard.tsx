@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import type { Post } from '@/types/admin';
+import type { Post } from '@/types/post';
 import { MOOD_COLORS, MOOD_EMOJI } from '../constants';
 
 interface PostCardProps {

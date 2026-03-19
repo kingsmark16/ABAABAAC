@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminService } from '@/services/admin.service';
-import type { PostFormData } from '@/types/admin';
+import type { PostFormData } from '@/types/post';
 
 const POSTS_QUERY_KEY = ['admin', 'posts'] as const;
 

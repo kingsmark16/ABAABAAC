@@ -1,4 +1,4 @@
-import type { Mood } from '@/types/admin';
+import type { Mood } from '@/types/post';
 
 export const MOOD_COLORS: Record<Mood, string> = {
   HAPPY: 'bg-linear-to-br from-yellow-100 to-amber-100 text-yellow-900 border border-yellow-200',
