@@ -1,5 +1,5 @@
 import Featuring from "@/components/Featuring"
-import RageOfTheDay from "@/components/RageOfTheDay"
+import RageOfTheDay from "@/components/RageOfTheDay/RageOfTheDay"
 
 
 const HomePage = () => {
