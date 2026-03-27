@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/db';
 import { generateToken } from '../lib/generateToken';
 
@@ -137,5 +138,43 @@ export async function logout(req: Request, res: Response) {
     } catch (error) {
         console.log('Error in logout controller', error instanceof Error ? error.message : 'Unknown error');
         res.status(500).json({message: 'Internal Server Error'});
+    }
+}
+
+export async function session(req: Request, res: Response) {
+    const token = req.cookies?.jwt;
+
+    if (!token) {
+        res.status(200).json({ authenticated: false });
+        return;
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+
+        if (!decoded?.id) {
+            res.status(200).json({ authenticated: false });
+            return;
+        }
+
+        const admin = await prisma.admin.findUnique({
+            where: { id: decoded.id },
+            select: {
+                id: true,
+                username: true,
+            },
+        });
+
+        if (!admin) {
+            res.status(200).json({ authenticated: false });
+            return;
+        }
+
+        res.status(200).json({
+            authenticated: true,
+            admin,
+        });
+    } catch {
+        res.status(200).json({ authenticated: false });
     }
 }

@@ -1,11 +1,9 @@
-import axios from 'axios';
+import axiosInstance from '@/lib/axios';
 import type { Post, PostFormData } from '@/types/post';
-
-const API_BASE = 'http://localhost:3000/api/admin';
 
 export const adminService = {
   getPosts: async (): Promise<Post[]> => {
-    const { data } = await axios.get(API_BASE);
+    const { data } = await axiosInstance.get('/admin');
     return Array.isArray(data) ? data : [];
   },
 
@@ -17,7 +15,7 @@ export const adminService = {
     formData.images.forEach((file) => form.append('images', file));
     formData.videos.forEach((file) => form.append('videos', file));
 
-    const { data } = await axios.post(API_BASE, form, {
+    const { data } = await axiosInstance.post('/admin', form, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
@@ -25,7 +23,7 @@ export const adminService = {
   },
 
   deletePost: async (postId: string): Promise<void> => {
-    await axios.delete(`${API_BASE}/${postId}`);
+    await axiosInstance.delete(`/admin/${postId}`);
   },
 
   /**

@@ -3,6 +3,7 @@ import Header from "./components/Header"
 import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
 import AdminPage from "./pages/AdminPage"
+import { ProtectedRoute } from "./components/protectedRoute/ProtectedRoutes"
 
 
 const App = () => {
@@ -14,7 +15,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/login" element={<LoginPage/>}/>
-        <Route path="/admin" element={<AdminPage/>}/>
+        <Route path="/admin" element={<ProtectedRoute><AdminPage/></ProtectedRoute>}/>
       </Routes>
       </main>
     </div>

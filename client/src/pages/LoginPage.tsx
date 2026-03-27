@@ -1,6 +1,10 @@
 
 
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
+import type { AxiosError } from "axios"
+import { useNavigate } from "react-router"
+import { useAuth } from "@/hooks/auth/useAuth"
+import { useLogin } from "@/hooks/auth/useLogin"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,42 +24,37 @@ import {
 import errorVideo from "@/assets/error.mp4"
 import Particles from "@/components/Particles"
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
-
 const LoginPage = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
+  const navigate = useNavigate()
+  const loginMutation = useLogin()
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate("/admin", { replace: true })
+    }
+  }, [authLoading, isAuthenticated, navigate])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError("")
-    setLoading(true)
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || "Login failed")
-        setShowErrorModal(true)
-        return
-      }
-
-      localStorage.setItem("token", data.token)
-      window.location.href = "/admin"
-    } catch {
-      setError("Unable to connect to server")
-    } finally {
-      setLoading(false)
+      await loginMutation.mutateAsync({ username, password })
+      navigate("/admin", { replace: true })
+    } catch (err) {
+      const axiosError = err as AxiosError<{ error?: string }>
+      setError(axiosError.response?.data?.error || "Unable to connect to server")
+      setShowErrorModal(true)
     }
+  }
+
+  if (authLoading || isAuthenticated) {
+    return null
   }
 
   return (
@@ -111,8 +110,8 @@ const LoginPage = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
+              <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                {loginMutation.isPending ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </CardContent>
