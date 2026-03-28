@@ -35,9 +35,10 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
+
+app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dropbox-auth', dropboxAuth);
-app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
 

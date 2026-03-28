@@ -2,7 +2,22 @@
 import { Request, Response } from 'express'
 import multer from 'multer'
 import { prisma } from '../lib/db'
-import { getPermanentLink, getVideoDuration, uploadToDropbox, getVideoThumbnail, deleteFromDropbox } from '../services/dropbox.service'
+import { getPermanentLink, getVideoDuration, uploadToDropbox, getVideoThumbnail, deleteFromDropbox, getStreamableLink } from '../services/dropbox.service'
+
+const normalizeMediaUrl = async (url?: string | null) => {
+    if (!url) return '';
+
+    if (url.startsWith('/')) {
+        try {
+            const permanent = await getPermanentLink(url);
+            return getStreamableLink(permanent) || '';
+        } catch {
+            return '';
+        }
+    }
+
+    return getStreamableLink(url) || '';
+};
 
 export const getAllPosts = async (req: Request, res: Response) => {
     try {
@@ -16,8 +31,30 @@ export const getAllPosts = async (req: Request, res: Response) => {
             }
         })
 
-        res.json(posts)
+        // Normalize media URLs
+        const normalizedPosts = await Promise.all(
+            posts.map(async (post) => ({
+                ...post,
+                pictures: await Promise.all(
+                    post.pictures.map(async (pic) => ({
+                        ...pic,
+                        url: await normalizeMediaUrl(pic.url)
+                    }))
+                ),
+                videos: await Promise.all(
+                    post.videos.map(async (video) => ({
+                        ...video,
+                        url: await normalizeMediaUrl(video.url),
+                        thumbnailUrl: await normalizeMediaUrl(video.thumbnailUrl)
+                    }))
+                )
+            }))
+        );
+
+        console.log('getAllPosts - Returning posts:', JSON.stringify(normalizedPosts, null, 2));
+        res.json(normalizedPosts)
     } catch (error) {
+        console.error('getAllPosts error:', error);
         res.status(500).json({ error: 'Failed to fetch posts' })
     }
 }
@@ -116,9 +153,33 @@ export const createPost = async (req: Request, res: Response) => {
                 pictures: { create: pictureData },
                 videos: { create: videoData },
                 createdAt: new Date(),
+            },
+            include: {
+                pictures: true,
+                videos: true
             }
-        })        
-        res.status(201).json(newPost);
+        })
+        
+        // Normalize media URLs
+        const normalizedPost = {
+            ...newPost,
+            pictures: await Promise.all(
+                newPost.pictures.map(async (pic) => ({
+                    ...pic,
+                    url: await normalizeMediaUrl(pic.url)
+                }))
+            ),
+            videos: await Promise.all(
+                newPost.videos.map(async (video) => ({
+                    ...video,
+                    url: await normalizeMediaUrl(video.url),
+                    thumbnailUrl: await normalizeMediaUrl(video.thumbnailUrl)
+                }))
+            )
+        };
+
+        console.log('createPost - Created post:', JSON.stringify(normalizedPost, null, 2));
+        res.status(201).json(normalizedPost);
     } catch (error) {
         console.error('createPost error:', error);
         const message = error instanceof Error ? error.message : String(error);
