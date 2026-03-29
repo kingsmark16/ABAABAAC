@@ -1,9 +1,10 @@
-import 'dotenv/config';
-import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { prisma } from '../lib/db';
-import { generateToken } from '../lib/generateToken';
+import 'dotenv/config'
+import { Request, Response } from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { prisma } from '../lib/db'
+import { generateToken } from '../lib/generateToken'
+import { ERRORS } from '../config/constants'
 
 
 // function hashToken(token: string) {
@@ -91,70 +92,67 @@ import { generateToken } from '../lib/generateToken';
 //     }
 // }
 
-export async function login(req: Request, res: Response) {
-    const { username, password } = req.body;
+export async function login(req: Request, res: Response): Promise<void> {
+    const { username, password } = req.body
 
     if (!username || !password) {
-        res.status(400).json({ error: 'Username and password are required' });
-        return;
+        res.status(400).json({ error: ERRORS.USERNAME_PASSWORD_REQUIRED })
+        return
     }
 
     try {
         const admin = await prisma.admin.findUnique({
             where: { username },
-        });
+        })
 
         if (!admin) {
-            res.status(401).json({ error: 'Invalid credentials' });
-            return;
+            res.status(401).json({ error: ERRORS.INVALID_CREDENTIALS })
+            return
         }
 
-        const isPasswordValid = await bcrypt.compare(password, admin.password);
+        const isPasswordValid = await bcrypt.compare(password, admin.password)
 
         if (!isPasswordValid) {
-            res.status(401).json({ error: 'Invalid credentials' });
-            return;
+            res.status(401).json({ error: ERRORS.INVALID_CREDENTIALS })
+            return
         }
 
-        generateToken(admin.id, res);
+        generateToken(admin.id, res)
 
         res.status(200).json({
             id: admin.id,
             username: admin.username,
         })
-
-       
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Login error:', error)
+        res.status(500).json({ error: 'Internal server error' })
     }
 }
 
-export async function logout(req: Request, res: Response) {
-    
+export async function logout(req: Request, res: Response): Promise<void> {
     try {
-        res.cookie('jwt', "", {maxAge: 0});
-        res.status(200).json({ message: 'Logged out' });
+        res.cookie('jwt', '', { maxAge: 0 })
+        res.status(200).json({ message: 'Logged out' })
     } catch (error) {
-        console.log('Error in logout controller', error instanceof Error ? error.message : 'Unknown error');
-        res.status(500).json({message: 'Internal Server Error'});
+        console.log('Error in logout controller', error instanceof Error ? error.message : 'Unknown error')
+        res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
-export async function session(req: Request, res: Response) {
-    const token = req.cookies?.jwt;
+export async function session(req: Request, res: Response): Promise<void> {
+    const token = req.cookies?.jwt
 
     if (!token) {
-        res.status(200).json({ authenticated: false });
-        return;
+        res.status(200).json({ authenticated: false })
+        return
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
 
         if (!decoded?.id) {
-            res.status(200).json({ authenticated: false });
-            return;
+            res.status(200).json({ authenticated: false })
+            return
         }
 
         const admin = await prisma.admin.findUnique({
@@ -163,18 +161,18 @@ export async function session(req: Request, res: Response) {
                 id: true,
                 username: true,
             },
-        });
+        })
 
         if (!admin) {
-            res.status(200).json({ authenticated: false });
-            return;
+            res.status(200).json({ authenticated: false })
+            return
         }
 
         res.status(200).json({
             authenticated: true,
             admin,
-        });
+        })
     } catch {
-        res.status(200).json({ authenticated: false });
+        res.status(200).json({ authenticated: false })
     }
 }

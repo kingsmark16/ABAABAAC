@@ -1,27 +1,34 @@
-import { useMemo } from "react";
-import type { MediaItem } from "../../types/rage-of-the-day.types";
+import { useMemo } from "react"
+import type { MediaItem } from "../../types/rage-of-the-day.types"
 
-export const useMediaItems = (post: {pictures: Array<{id: string; url?: string}>; videos: Array<{id: string; url?: string; thumbnailUrl?: string}>} | null | undefined) => {
+interface PostMedia {
+  picture: { id: string; url?: string } | null
+  video: { id: string; url?: string; thumbnailUrl?: string } | null
+}
+
+export const useMediaItems = (post: PostMedia | null | undefined): MediaItem[] => {
   return useMemo<MediaItem[]>(() => {
-    if (!post) return [];
+    if (!post) return []
 
-    const images: MediaItem[] = post.pictures
-      .filter((picture): picture is {id: string; url: string} => Boolean(picture.url))
-      .map((picture) => ({
-        id: `image-${picture.id}`,
+    const items: MediaItem[] = []
+
+    if (post.picture?.url) {
+      items.push({
+        id: `image-${post.picture.id}`,
         type: "image" as const,
-        src: picture.url,
-      }));
+        src: post.picture.url
+      })
+    }
 
-    const videos: MediaItem[] = post.videos
-      .filter((video): video is {id: string; url: string; thumbnailUrl?: string} => Boolean(video.url))
-      .map((video) => ({
-        id: `video-${video.id}`,
+    if (post.video?.url) {
+      items.push({
+        id: `video-${post.video.id}`,
         type: "video" as const,
-        src: video.url,
-        poster: video.thumbnailUrl || undefined,
-      }));
+        src: post.video.url,
+        poster: post.video.thumbnailUrl || undefined
+      })
+    }
 
-    return [...images, ...videos];
-  }, [post]);
-};
+    return items
+  }, [post])
+}

@@ -56,26 +56,19 @@ export function PostTable({ posts, onEdit, onDelete }: PostTableProps) {
               {/* Images */}
               <TableCell>
                 <div className="flex flex-wrap gap-2">
-                  {(post.pictures?.length ?? 0) > 0 ? (
-                    post.pictures.slice(0, 3).map((pic) => (
-                      <div
-                        key={pic.id}
-                        className="relative w-12 h-12 rounded overflow-hidden border border-purple-500/30 hover:border-purple-500/60 transition-colors"
-                      >
-                        <img
-                          src={pic.url}
-                          alt="Post image"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <span className="text-xs text-gray-500">No images</span>
-                  )}
-                  {(post.pictures?.length ?? 0) > 3 && (
-                    <div className="w-12 h-12 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-xs font-semibold text-purple-300">
-                      +{post.pictures.length - 3}
+                  {post.picture?.url ? (
+                    <div
+                      key={post.picture.id}
+                      className="relative w-12 h-12 rounded overflow-hidden border border-purple-500/30 hover:border-purple-500/60 transition-colors"
+                    >
+                      <img
+                        src={post.picture.url}
+                        alt="Post image"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
+                  ) : (
+                    <span className="text-xs text-gray-500">No image</span>
                   )}
                 </div>
               </TableCell>
@@ -83,37 +76,30 @@ export function PostTable({ posts, onEdit, onDelete }: PostTableProps) {
               {/* Videos */}
               <TableCell>
                 <div className="flex flex-wrap gap-2">
-                  {(post.videos?.length ?? 0) > 0 ? (
-                    post.videos.slice(0, 3).map((video) => (
-                      <div
-                        key={video.id}
-                        className="relative w-12 h-12 rounded overflow-hidden border border-purple-500/30 hover:border-purple-500/60 transition-colors group"
-                      >
-                        {video.thumbnailUrl ? (
-                          <>
-                            <img
-                              src={video.thumbnailUrl}
-                              alt="Video thumbnail"
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
-                              <div className="text-white text-xs font-semibold">▶</div>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                            <div className="text-white text-lg">▶</div>
+                  {post.video?.url ? (
+                    <div
+                      key={post.video.id}
+                      className="relative w-12 h-12 rounded overflow-hidden border border-purple-500/30 hover:border-purple-500/60 transition-colors group"
+                    >
+                      {post.video.thumbnailUrl ? (
+                        <>
+                          <img
+                            src={post.video.thumbnailUrl}
+                            alt="Video thumbnail"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+                            <div className="text-white text-xs font-semibold">▶</div>
                           </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <span className="text-xs text-gray-500">No videos</span>
-                  )}
-                  {(post.videos?.length ?? 0) > 3 && (
-                    <div className="w-12 h-12 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-xs font-semibold text-purple-300">
-                      +{post.videos.length - 3}
+                        </>
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                          <div className="text-white text-lg">▶</div>
+                        </div>
+                      )}
                     </div>
+                  ) : (
+                    <span className="text-xs text-gray-500">No video</span>
                   )}
                 </div>
               </TableCell>

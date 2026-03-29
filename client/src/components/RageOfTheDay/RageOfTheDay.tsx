@@ -32,8 +32,8 @@ const RageOfTheDay: React.FC = () => {
   if (isError) return <ErrorState onRetry={refetch} />;
   if (!post) return <EmptyState />;
 
-  const imageCount = post.pictures.filter((p) => !!p.url).length;
-  const videoCount = post.videos.filter((v) => !!v.url).length;
+  const imageCount = post.picture?.url ? 1 : 0;
+  const videoCount = post.video?.url ? 1 : 0;
 
   return (
     <section className="w-full mb-8 px-2.5 pb-5 md:px-3">

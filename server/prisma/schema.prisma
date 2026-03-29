@@ -17,25 +17,13 @@ model Admin {
   id        String   @id @default(ulid())
   username  String   @unique
   password  String
-  refreshTokens RefreshToken[]
-}
-
-model RefreshToken {
-  id         String   @id @default(ulid())
-  tokenHash  String   @unique
-  adminId    String
-  admin      Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  expiresAt  DateTime
-  revokedAt  DateTime?
-  createdAt  DateTime @default(now())
-
 }
 
 model Post {
   id              String    @id @default(ulid())
   caption         String?
-  pictures        Picture[]
-  videos          Video[]
+  picture         Picture?  // Optional: one picture only
+  video           Video?    // Optional: one video only
   mood            Mood
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -46,8 +34,8 @@ model Picture {
   id          String   @id @default(ulid())
   url         String
   views       Int      @default(0)
-  postId      String?
-  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      String   @unique  // Ensure one picture per post
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   uploadedAt  DateTime @default(now())
 }
 
@@ -57,8 +45,8 @@ model Video {
   url          String
   thumbnailUrl String
   views        Int      @default(0)
-  postId       String?
-  post         Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       String   @unique  // Ensure one video per post
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   uploadedAt   DateTime @default(now())
 }
 
@@ -69,7 +57,6 @@ model DropboxToken {
   expires_at  DateTime?
   updatedAt   DateTime @updatedAt
 }
-
 
 enum Mood {
   HAPPY

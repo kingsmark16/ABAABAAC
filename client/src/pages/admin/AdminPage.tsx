@@ -152,7 +152,7 @@ const AdminPage = () => {
                 <DialogDescription className="text-gray-300">
                   {editingPost
                     ? 'Update your post details and media'
-                    : 'Add a new post with images and videos'}
+                    : 'Add a new post with either an image or video'}
                 </DialogDescription>
               </DialogHeader>
 
